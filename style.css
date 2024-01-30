@@ -17,6 +17,7 @@ body {
 }
 
 #left-panel, #right-panel {
+    padding: 10px;
     width: 200px;
 }
 

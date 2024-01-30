@@ -1,8 +1,10 @@
 (() => {
-    console.log('Hi Mom');
-    const fieldHeight = 16;
+    const fieldHeight = 100;
     const fieldWidth  = 30;
+    // difficulty is the percentage of cells that are mines (easy = 10%, medium = 15%, hard = 20%)
+    const difficulty = 0.1;
 
+    console.log('LOADING GAME')
     const gameboard = document.getElementById('gameboard');
     const resetButton = document.getElementById('restart');
     console.log(gameboard);
@@ -36,8 +38,12 @@
         {x: -1, y:  0},                  {x: 1, y:  0},
         {x: -1, y:  1}, {x: 0, y:  1}, {x: 1, y:  1} ];
 
-    function placeMines(count) {
+    function placeMines(difficulty) {
+        const count = Math.floor(fieldWidth * fieldHeight * difficulty);
+        // update the mine-count in the document with the count
+        document.getElementById('mine-count').innerText = count;
         const mines = new Set();
+        console.log('MINES:', count)
         while (mines.size < count) {
             const x = Math.floor(Math.random() * fieldWidth);
             const y = Math.floor(Math.random() * fieldHeight);
@@ -129,6 +135,7 @@
         }
     })
 
-    placeMines(40);
+    console.log('PLACING MINES')
+    placeMines(difficulty);
 
 }) ()

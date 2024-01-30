@@ -13,25 +13,39 @@
         <!-- Add your header content here -->
         <h1>MineSweeper</h1>
     </header>
-    <div id="left-panel">
-        <!-- Add your left panel content here -->
-    </div>
-    <div id="boardwrapper">
-        <div id="scoreboard">
-            <!-- Add your scoreboard content here -->
-            <div id="bomb-count" class="digital-display">099</div>
-            <button id="restart">&#128515;</button>
-            <div id="time-elapsed" class="digital-display">000</div>
+    <div id="game-container">
+
+        <div id="left-panel">
+            <!-- Add your left panel content here -->
+            <!-- Add Inputs for Grid Size and Difficulty Here-->
+            <div id="inputs">
+                <label for="grid-size">Grid Size:</label>
+                <input type="number" id="grid-size" name="grid-size" min="2" max="10" value="5">
+                <label for="difficulty">Difficulty:</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
         </div>
-        <div id="rib"></div>
-        <div id="game-container">
-            <div id="gameboard"></div>
+        <div id="boardwrapper">
+            <div id="scoreboard">
+                <!-- Add your scoreboard content here -->
+                <div id="mine-count" class="digital-display">099</div>
+                <button id="restart">&#128515;</button>
+                <div id="time-elapsed" class="digital-display">000</div>
+            </div>
+            <div id="rib"></div>
+            <div id="game-border">
+                <div id="gameboard"></div>
+            </div>
+        </div>
+        <div id="right-panel">
+            <!-- Add your right panel content here -->
         </div>
     </div>
-    <div id="right-panel">
-        <!-- Add your right panel content here -->
-    </div>
-    <footer>
+        <footer>
         <!-- Add your footer content here -->
         <p>Copyright &copy; 2024</p>
     </footer>
