@@ -90,14 +90,58 @@ body {
     border: 3px solid;
     width: 20px;
     height: 20px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
 }
 
 .cell.obscurred {
     border-style: outset;
 }
 
-.cell.revealed {
+.cell.revealed{
     border-style: inset;
+}
+
+.cell.revealed * {
+    display: block;
+}
+
+.cell.flag * {
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+
+.cell.n1 {
+    color: blue;
+}
+
+.cell.n2 {
+    color: green;
+}
+
+.cell.n3 {
+    color: red;
+}
+
+.cell.n4 {
+    color: purple;
+}
+
+.cell.n5 {
+    color: maroon;
+}
+
+.cell.n6 {
+    color: turquoise;
+}
+
+.cell.n7 {
+    color: black;
+}
+
+.cell.n8 {
+    color: gray;
 }
 
 .cell * {
