@@ -1,7 +1,7 @@
 console.log('script.js loaded');
 (() => {
     const fieldHeight = 10;
-    const fieldWidth  = 30;
+    const fieldWidth  = 10;
     const mines = new Set();
     // difficulty is the percentage of cells that are mines (easy = 10%, medium = 15%, hard = 20%)
     let difficulty = 0.1;
@@ -9,27 +9,10 @@ console.log('script.js loaded');
     let revealedCells = 0;
     let gameTimer = null;
     let gameOver = false;
-
-    console.log('LOADING GAME')
     const gameboard = document.getElementById('gameboard');
     const resetButton = document.getElementById('reset-button');
-    console.log(gameboard);
-    gameboard.setAttribute('rows', fieldHeight);
-    gameboard.setAttribute('rows', fieldWidth);
-    for (let y = 0 ; y < fieldHeight ; y++) {
-        for (let x = 0 ; x < fieldWidth; x++) {
-            const cell = document.createElement('div');
-            cell.setAttribute('id', `cell_${x}-${y}`);
-            cell.setAttribute('x', x);
-            cell.setAttribute('y', y);
-            cell.setAttribute('neighbor-mines', 0);
-            cell.setAttribute('mine', false);
-            cell.classList.add('cell');
-            cell.classList.add(`obscurred`);
-            cell.innerText=('');
-            gameboard.appendChild(cell);
-        }
-    }
+
+    console.log('LOADING GAME')
 
     function incrementNeighborMine(x, y) {
         if ( x < 0 || x >= fieldWidth || y < 0 || y >= fieldHeight) {
@@ -41,8 +24,8 @@ console.log('script.js loaded');
     }
 
     const neighbors = [ {x: -1, y: -1}, {x: 0, y: -1}, {x: 1, y: -1},
-        {x: -1, y:  0},                  {x: 1, y:  0},
-        {x: -1, y:  1}, {x: 0, y:  1}, {x: 1, y:  1} ];
+                        {x: -1, y:  0},                {x: 1, y:  0},
+                        {x: -1, y:  1}, {x: 0, y:  1}, {x: 1, y:  1} ];
 
     function placeMines(difficulty) {
         console.log('PLACING MINES');
@@ -66,21 +49,46 @@ console.log('script.js loaded');
 
     }
 
+    function createGameBoard() {
+        gameboard.innerHTML = '';
+        gameboard.style.gridTemplateColumns = `repeat(${fieldWidth}, 1fr)`
+
+        gameboard.setAttribute('rows', fieldHeight);
+        gameboard.setAttribute('cols', fieldWidth);
+        for (let y = 0 ; y < fieldHeight ; y++) {
+            for (let x = 0 ; x < fieldWidth; x++) {
+                const cell = document.createElement('div');
+                cell.setAttribute('id', `cell_${x}-${y}`);
+                cell.setAttribute('x', x);
+                cell.setAttribute('y', y);
+                cell.setAttribute('neighbor-mines', 0);
+                cell.setAttribute('mine', false);
+                cell.classList.add('cell');
+                cell.classList.add(`obscurred`);
+                cell.innerText=('');
+                gameboard.appendChild(cell);
+            }
+        }
+        placeMines(difficulty);
+    }
 
 
-    function revealNeigborCells(x, y) {
-        const cell = document.getElementById(`cell_${x}-${y}`);
+
+    function revealNeigborCells(cell) {
         cell.classList.remove('obscurred');
         cell.classList.add('revealed');
         revealedCells++;
         if (cell.getAttribute('neighbor-mines') > 0) {
             console.log("CELL HAS NEIGHBOR MINES:", cell)
             cell.innerText = cell.getAttribute('neighbor-mines');
+            cell.classList.add(`n${cell.getAttribute('neighbor-mines')}`);
         } else {
+            let x = parseInt(cell.getAttribute('x'));
+            let y = parseInt(cell.getAttribute('y'));
             console.log(`CELL NOT DOES HAVE NEIGHBOR MINES: ${x}  ${y}`, cell)
             neighbors.forEach((neighbor) => {
-                const neighborX = parseInt(x) + neighbor.x;
-                const neighborY = parseInt(y) + neighbor.y;
+                const neighborX = x + neighbor.x;
+                const neighborY = y + neighbor.y;
                 if (neighborX < 0 || neighborX >= fieldWidth || neighborY < 0 || neighborY >= fieldHeight) {
                     return;
                 }
@@ -89,7 +97,7 @@ console.log('script.js loaded');
                     return;
                 }
                 // setTimeout( () => { revealNeigborCells(neighborX, neighborY) } , 50);
-                revealNeigborCells(neighborX, neighborY);
+                revealNeigborCells(neighborCell);
             });
         }
     }
@@ -131,8 +139,7 @@ console.log('script.js loaded');
         });
     }
 
-    function revealCell(x, y) {
-        const cell = document.getElementById(`cell_${x}-${y}`);
+    function revealCell(cell) {
         if (cell.classList.contains('revealed')) {
             return;
         }
@@ -146,50 +153,49 @@ console.log('script.js loaded');
             cell.classList.add(`n${cell.getAttribute('neighbor-mines')}`);
             revealedCells++;
         } else {
-            revealNeigborCells(x, y);
+            revealNeigborCells(cell);
         }
     }
 
-    gameboard.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
+    function getCellfromTarget(target) {
+        let cell = target;
+        if (target.nodeName == 'img'.toUpperCase()) {
+            cell = target.parentElement;
+        }
         if (gameOver) {
             // message in the footer to user that game is over
+            return null;
+        }
+        return cell.classList.contains('cell') ? cell : null;
+    }
+
+    gameboard.addEventListener("contextmenu", (event) => {
+        const cell = getCellfromTarget(event.target);
+        if (cell === null) {
             return;
-        } else if (gameTimer === null) {
+        }
+        event.preventDefault();
+        if (gameTimer === null) {
             startTimer();
         }
-        cell = event.target;
-        if (event.target.nodeName == 'img'.toUpperCase()) {
-            console.log("grabbing parent")
-            cell = event.target.parentElement;
-        }
         displayFlag(cell);
-        console.log(cell);
-
     })
 
     gameboard.addEventListener('click', (event) => {
+        const cell = getCellfromTarget(event.target);
+        if (cell === null) {
+            return;
+        }
         event.preventDefault();
         console.log('GAMEBOARD CLICKED')
-        if (gameOver) {
-            // message in the footer to user that game is over
 
-            return;
-        } else if (gameTimer === null) {
+        if (gameTimer === null) {
             startTimer();
         }
-        cell = event.target;
-        if (event.target.nodeName == 'img'.toUpperCase()) {
-            console.log("grabbing parent")
-            cell = event.target.parentElement;
-        }
-        console.log(cell);
-        if (!cell.classList.contains('cell')) { return; }
-        let x = cell.getAttribute('x');
-        let y = cell.getAttribute('y');
-        revealCell(x, y);
+        revealCell(cell);
         if (cell.getAttribute('mine') === 'true') {
             gameOver = true;
+            cell.style.backgroundColor = 'yellow';
             //clearInterval(gameTimer);
             console.log('returned from clearInterval');
             gameTimer = null;
@@ -216,7 +222,7 @@ console.log('script.js loaded');
                 gameOver = false;
             }
         }
-        placeMines(difficulty);
+        createGameBoard();
     })
 
      function startTimer() {
@@ -233,6 +239,6 @@ console.log('script.js loaded');
         }, 1000);
     }
 
-    placeMines(difficulty);
+    createGameBoard();
 
 }) ()
