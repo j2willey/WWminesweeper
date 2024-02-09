@@ -29,10 +29,8 @@ console.log('script.js loaded');
                         {x: -1, y:  1}, {x: 0, y:  1}, {x: 1, y:  1} ];
 
     function placeMines(difficulty) {
-        console.log('PLACING MINES');
         mineCount = Math.floor(fieldWidth * fieldHeight * difficulty);
         document.getElementById('mine-count').innerText = mineCount;
-        console.log('MINES:', mineCount);
         mines.clear();
         flags.clear();
         while (mines.size < mineCount) {
@@ -65,10 +63,11 @@ console.log('script.js loaded');
                 cell.setAttribute('mine', false);
                 cell.classList.add('cell');
                 cell.classList.add(`obscurred`);
-                cell.innerText=('');
                 gameboard.appendChild(cell);
             }
         }
+        revealedCells = 0
+        document.getElementById('time-elapsed').innerText = 0;
         placeMines(difficulty);
     }
 
@@ -127,7 +126,9 @@ console.log('script.js loaded');
         const img = document.createElement('img');
         img.src = 'images/icon_mine.png';
         img.classList.add('mine');
-        cell.appendChild(img); // Add the image element as a child of the cell
+        cell.appendChild(img);
+        cell.classList.remove('obscurred');
+        cell.classList.add('revealed');
     }
 
     function displayAllMines() {
@@ -136,8 +137,6 @@ console.log('script.js loaded');
             if (cell.classList.contains('flag')) {
                 return;
             }
-            cell.classList.remove('obscurred');
-            cell.classList.add('revealed');
             displayMine(cell);
         });
         flags.forEach((cell) => {
@@ -145,11 +144,13 @@ console.log('script.js loaded');
                 return;
             }
             // display a red X over an image of a mine
-            cell.innerHTML = 'X';
-            displayMine(cell);
-            cell.classList.add('flagmiss');
-            cell.style.backgroundColor = 'yellow';
-            cell.style.color = 'red';
+            const overlay = document.createElement('div');
+            overlay.classList.add('flag-overlay');
+            overlay.textContent = 'X';
+            cell.appendChild(overlay);
+            cell.style.position = 'relative';
+            cell.classList.remove('obscurred');
+            cell.classList.add('revealed');
         });
     }
 
@@ -219,6 +220,7 @@ console.log('script.js loaded');
             gameOver = true;
             clearInterval(gameTimer);
             gameTimer = null;
+            throwConfetti();
             setTimeout(() => alert('You Win'), 0);
         }
         console.log('revealedCells: ', revealedCells, "  mineCount: ", mineCount, "  gameOver: ", gameOver);
@@ -228,6 +230,8 @@ console.log('script.js loaded');
 
     resetButton.addEventListener('click', (event) => {
         console.log('reset clicked');
+        stopConfetti();
+
         for (let x = 0 ; x < fieldWidth ; x++) {
             for (let y = 0 ; y < fieldHeight; y++) {
                 const cell = document.getElementById(`cell_${x}-${y}`);
