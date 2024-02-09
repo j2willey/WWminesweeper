@@ -38,10 +38,10 @@ console.log('script.js loaded');
         while (mines.size < mineCount) {
             const x = Math.floor(Math.random() * fieldWidth);
             const y = Math.floor(Math.random() * fieldHeight);
-            if (mines.has(`${x}-${y}`)) { continue; }
-            mines.add(`${x}-${y}`);
             const cell = document.getElementById(`cell_${x}-${y}`);
+            if (mines.has(cell)) { continue; }
             cell.setAttribute('mine', true);
+            mines.add(cell);
             neighbors.forEach((neighbor) => {
                 incrementNeighborMine(x + neighbor.x, y + neighbor.y);
             });
@@ -132,9 +132,7 @@ console.log('script.js loaded');
 
     function displayAllMines() {
         console.log('DISPLAYING ALL MINES', mines);
-        mines.forEach((mine) => {
-            const [x, y] = mine.split('-');
-            const cell = document.getElementById(`cell_${x}-${y}`);
+        mines.forEach((cell) => {
             if (cell.classList.contains('flag')) {
                 return;
             }
@@ -192,7 +190,7 @@ console.log('script.js loaded');
         }
         event.preventDefault();
         if (gameTimer === null) {
-            startTimer();
+            startGame();
         }
         toggleFlag(cell);
     })
@@ -206,7 +204,7 @@ console.log('script.js loaded');
         console.log('GAMEBOARD CLICKED')
 
         if (gameTimer === null) {
-            startTimer();
+            startGame();
         }
         revealCell(cell);
         if (cell.getAttribute('mine') === 'true') {
@@ -214,10 +212,12 @@ console.log('script.js loaded');
             cell.style.backgroundColor = 'yellow';
             //clearInterval(gameTimer);
             console.log('returned from clearInterval');
+            clearInterval(gameTimer);
             gameTimer = null;
             setTimeout(() => alert('You Lose'), 10);
         } else if (revealedCells === (fieldWidth * fieldHeight - mineCount)) {
             gameOver = true;
+            clearInterval(gameTimer);
             gameTimer = null;
             setTimeout(() => alert('You Win'), 0);
         }
@@ -236,12 +236,20 @@ console.log('script.js loaded');
                 cell.setAttribute('neighbor-mines', 0);
                 cell.innerText = '';
                 gameOver = false;
+                clearInterval(gameTimer);
+                gameTimer = null;
             }
         }
         createGameBoard();
     })
 
-     function startTimer() {
+    function endGame() {
+        clearInterval(gameTimer);
+        gameTimer = null;
+        gameOver = true;
+    }
+
+    function startGame() {
         let startTime = Date.now();
         gameTimer = setInterval(() => {
             if (gameOver) {
