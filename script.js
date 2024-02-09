@@ -3,6 +3,7 @@ console.log('script.js loaded');
     const fieldHeight = 10;
     const fieldWidth  = 10;
     const mines = new Set();
+    const flags = new Set();
     // difficulty is the percentage of cells that are mines (easy = 10%, medium = 15%, hard = 20%)
     let difficulty = 0.1;
     let mineCount = 0;
@@ -33,6 +34,7 @@ console.log('script.js loaded');
         document.getElementById('mine-count').innerText = mineCount;
         console.log('MINES:', mineCount);
         mines.clear();
+        flags.clear();
         while (mines.size < mineCount) {
             const x = Math.floor(Math.random() * fieldWidth);
             const y = Math.floor(Math.random() * fieldHeight);
@@ -40,8 +42,6 @@ console.log('script.js loaded');
             mines.add(`${x}-${y}`);
             const cell = document.getElementById(`cell_${x}-${y}`);
             cell.setAttribute('mine', true);
-            // cell.classList.remove('obscurred');
-            // cell.classList.add('revealed');
             neighbors.forEach((neighbor) => {
                 incrementNeighborMine(x + neighbor.x, y + neighbor.y);
             });
@@ -103,22 +103,24 @@ console.log('script.js loaded');
     }
 
 
-    function displayFlag(cell) {
+    function toggleFlag(cell) {
         let mineCount = parseInt(document.getElementById('mine-count').innerText);
 
         if (cell.classList.contains('flag')) {
             cell.classList.remove('flag');
             cell.removeChild(cell.firstChild); // Add the image element as a child of the cell
             mineCount++;
+            flags.delete(cell);
         } else {
             const img = document.createElement('img');
             img.src = 'images/icon_flag.png';
             cell.classList.add('flag');
             cell.appendChild(img); // Add the image element as a child of the cell
             mineCount--;
+            flags.add(cell);
         }
         document.getElementById('mine-count').innerText = mineCount;
-
+        console.log('FLAGS:', flags);
     }
 
     function displayMine(cell) {
@@ -133,9 +135,23 @@ console.log('script.js loaded');
         mines.forEach((mine) => {
             const [x, y] = mine.split('-');
             const cell = document.getElementById(`cell_${x}-${y}`);
+            if (cell.classList.contains('flag')) {
+                return;
+            }
             cell.classList.remove('obscurred');
             cell.classList.add('revealed');
             displayMine(cell);
+        });
+        flags.forEach((cell) => {
+            if (cell.getAttribute('mine') === 'true') {
+                return;
+            }
+            // display a red X over an image of a mine
+            cell.innerHTML = 'X';
+            displayMine(cell);
+            cell.classList.add('flagmiss');
+            cell.style.backgroundColor = 'yellow';
+            cell.style.color = 'red';
         });
     }
 
@@ -178,7 +194,7 @@ console.log('script.js loaded');
         if (gameTimer === null) {
             startTimer();
         }
-        displayFlag(cell);
+        toggleFlag(cell);
     })
 
     gameboard.addEventListener('click', (event) => {
@@ -199,7 +215,7 @@ console.log('script.js loaded');
             //clearInterval(gameTimer);
             console.log('returned from clearInterval');
             gameTimer = null;
-            setTimeout(() => alert('You Lose'), 0);
+            setTimeout(() => alert('You Lose'), 10);
         } else if (revealedCells === (fieldWidth * fieldHeight - mineCount)) {
             gameOver = true;
             gameTimer = null;
