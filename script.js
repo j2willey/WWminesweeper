@@ -1,11 +1,12 @@
 console.log('script.js loaded');
 (() => {
-    const fieldHeight = 10;
-    const fieldWidth  = 10;
+    let fieldHeight = 10;
+    let fieldWidth  = 10;
     const mines = new Set();
     const flags = new Set();
     // difficulty is the percentage of cells that are mines (easy = 10%, medium = 15%, hard = 20%)
-    let difficulty = 0.1;
+    let difficultyOptions = { 'easy': 0.1, 'medium': 0.15, 'hard': 0.2};
+    let difficulty = difficultyOptions['easy'];
     let mineCount = 0;
     let revealedCells = 0;
     let gameTimer = null;
@@ -195,6 +196,24 @@ console.log('script.js loaded');
         }
         toggleFlag(cell);
     })
+
+    const gridSizeSelect = document.getElementById('grid-size');
+
+    gridSizeSelect.addEventListener('change', (event) => {
+        fieldHeight = event.target.value;
+        fieldWidth = event.target.value;
+        createGameBoard();
+        resetButton.click(); // Assuming you have a function to reset the game
+    });
+
+    const difficultySelect = document.getElementById('difficulty');
+
+    difficultySelect.addEventListener('change', (event) => {
+        difficulty = difficultyOptions[event.target.value];
+        createGameBoard();
+        resetButton.click(); // Assuming you have a function to reset the game
+    });
+
 
     gameboard.addEventListener('click', (event) => {
         const cell = getCellfromTarget(event.target);

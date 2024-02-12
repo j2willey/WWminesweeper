@@ -20,9 +20,13 @@
         <div id="left-panel">
             <!-- Add your left panel content here -->
             <!-- Add Inputs for Grid Size and Difficulty Here-->
-            <div id="inputs">
+            <div id="inputs" class="gameOptions">
                 <label for="grid-size">Grid Size:</label>
-                <input type="number" id="grid-size" name="grid-size" min="2" max="10" value="5">
+                <select id="grid-size">
+                    <option value="10">10x10</option>
+                    <option value="20">20x20</option>
+                    <option value="30">30x30</option>
+                </select>
                 <label for="difficulty">Difficulty:</label>
                 <select id="difficulty" name="difficulty">
                     <option value="easy">Easy</option>
