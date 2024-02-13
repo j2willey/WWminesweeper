@@ -26,3 +26,22 @@ Expert	              16×30    480  99   20.6%
 Easy    10%
 Med     15%
 Expert  20%
+
+
+Possible enhancements:
+  Stats...
+    keep Win / Loss count for session
+    keep total time for session
+    Time per win ?
+    Customizable Themes?  Colors?  Size - larger cells?
+
+Possible variation of game:
+   continue race to "find all mines"
+   have random mines explode at set intervals, revealing
+      adjacent cells.
+   Score is based on how many mines one can find, and flag
+   before all mines exploded or found.
+
+Multiplayer MineSweeper?
+   Cooperative Play?
+   head to head matchup?

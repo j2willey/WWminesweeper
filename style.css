@@ -20,11 +20,20 @@ body {
 
 #left-panel, #right-panel {
     padding: 10px;
-    width: 200px;
+    width: 350px;
     opacity: 0.5;
     z-index: 100;
 }
 
+#inputs.gameOptions {
+    display: flex;
+    flex-direction: column;
+}
+
+#inputs.gameOptions * {
+    font-size: 24px;
+    padding:   10px;
+}
 
 #boardwrapper {
     background-color: #C0C0C0;
@@ -82,6 +91,23 @@ body {
     border-style: outset;
 }
 
+#game-result {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1); /* semi-transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* ensure overlay is on top */
+}
+
+#game-result-text {
+    font-size: 32pt;
+    color: red;
+}
 
 #gameboard {
     display: grid;
@@ -175,7 +201,7 @@ body {
     background-color: #000;
 }
 
- canvas {
+canvas {
     position: fixed;
     top: 0;
     overflow-y: hidden;
@@ -183,4 +209,8 @@ body {
     width: 100%;
     margin: 0;
     z-index: 10;
-  }
+}
+
+footer p {
+    text-decoration: line-through;
+}

@@ -13,6 +13,8 @@ console.log('script.js loaded');
     let gameOver = false;
     const gameboard = document.getElementById('gameboard');
     const resetButton = document.getElementById('reset-button');
+    const gameResult = document.getElementById('game-result');
+    const gameResultText = document.getElementById('game-result-text');
 
     console.log('LOADING GAME')
 
@@ -234,22 +236,32 @@ console.log('script.js loaded');
             console.log('returned from clearInterval');
             clearInterval(gameTimer);
             gameTimer = null;
-            setTimeout(() => alert('You Lose'), 10);
+            gameResultText.textContent = 'You Lose!';
+            gameResult.style.display = 'flex';
         } else if (revealedCells === (fieldWidth * fieldHeight - mineCount)) {
             gameOver = true;
             clearInterval(gameTimer);
             gameTimer = null;
             throwConfetti();
-            setTimeout(() => alert('You Win'), 0);
+            gameResultText.textContent = 'You Win!';
+            gameResult.style.display = 'flex';
         }
         console.log('revealedCells: ', revealedCells, "  mineCount: ", mineCount, "  gameOver: ", gameOver);
 
         // revealNeigborCells(cell.getAttribute('x'), cell.getAttribute('y'))
     });
 
+    gameResult.addEventListener('click', () => {
+        gameResultText.textContent = '----';
+        gameResult.style.display = 'none';
+        resetButton.click();
+    });
+
     resetButton.addEventListener('click', (event) => {
         console.log('reset clicked');
         stopConfetti();
+        gameResultText.textContent = '----';
+        gameResult.style.display = 'none';
 
         for (let x = 0 ; x < fieldWidth ; x++) {
             for (let y = 0 ; y < fieldHeight; y++) {
